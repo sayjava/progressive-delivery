@@ -1,0 +1,17 @@
+{
+  "name": "app",
+  "version": "2.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1",
+    "express-prometheus-middleware": "^1.2.0",
+    "express-winston": "^4.2.0",
+    "winston": "^3.8.2"
+  }
+}
