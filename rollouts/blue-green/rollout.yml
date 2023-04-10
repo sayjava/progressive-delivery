@@ -1,0 +1,98 @@
+# This example demonstrates a Rollout using the blue-green update strategy, which contains a manual
+# gate before promoting the new stack.
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: app-blue-green
+spec:
+  replicas: 3
+  revisionHistoryLimit: 2
+  selector:
+    matchLabels:
+      app: app-blue-green
+  template:
+    metadata:
+      labels:
+        app: app-blue-green
+    spec:
+      containers:
+        - name: app-blue-green
+          image: app:v2
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 3000
+          env:
+            - name: VERSION
+              value: v2
+            - name: PORT
+              value: "3000"
+  strategy:
+    blueGreen:
+      # activeService specifies the service to update with the new template hash at time of promotion.
+      # This field is mandatory for the blueGreen update strategy.
+      activeService: app-blue-green-active
+      # previewService specifies the service to update with the new template hash before promotion.
+      # This allows the preview stack to be reachable without serving production traffic.
+      # This field is optional.
+      previewService: app-blue-green-preview
+      # autoPromotionEnabled disables automated promotion of the new stack by pausing the rollout
+      # immediately before the promotion. If omitted, the default behavior is to promote the new
+      # stack as soon as the ReplicaSet are completely ready/available.
+      # Rollouts can be resumed using: `kubectl argo rollouts promote ROLLOUT`
+      autoPromotionEnabled: false
+
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: app-blue-green-active
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io.scheme: "http"
+    prometheus.io/path: "/metrics"
+    prometheus.io/port: "3000"
+spec:
+  selector:
+    app: app-blue-green
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3000
+
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: app-blue-green-preview
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io.scheme: "http"
+    prometheus.io/path: "/metrics"
+    prometheus.io/port: "3000"
+spec:
+  selector:
+    app: app-blue-green
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3000
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: app-blue-green-active
+  annotations:
+    kubernetes.io/ingress.class: nginx
+spec:
+  rules:
+    - host: app.local
+      http:
+        paths:
+          - path: /
+            pathType: ImplementationSpecific
+            backend:
+              # Reference to a Service name, also specified in the Rollout spec.strategy.canary.stableService field
+              service:
+                name: app-blue-green-active
+                port:
+                  number: 80
