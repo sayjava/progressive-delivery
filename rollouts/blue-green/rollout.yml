@@ -21,11 +21,6 @@ spec:
           imagePullPolicy: Never
           ports:
             - containerPort: 3000
-          env:
-            - name: VERSION
-              value: v2
-            - name: PORT
-              value: "3000"
   strategy:
     blueGreen:
       # activeService specifies the service to update with the new template hash at time of promotion.

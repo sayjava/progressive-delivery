@@ -52,6 +52,14 @@ install_rollout:
 
 .PHONY: install_rollout
 
+
+deploy_app:
+	@kubectl apply -f deploy/service.yml
+	@kubectl apply -f deploy/ingress.yml
+	@kubectl apply -f deploy/deployment.yml
+
+.PHONY: deploy_app
+
 show_prometheus:
 	@kubectl port-forward --namespace=monitoring svc/prometheus-server  4000:80
 .PHONY: show_prometheus
