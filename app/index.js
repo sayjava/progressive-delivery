@@ -9,6 +9,11 @@ const PORT = process.env.PORT || 3000;
 const version = process.env.VERSION || 'v1'
 
 const good = (req, res) => {
+
+	if (req.headers["content-type"].includes('json')) {
+		return res.json(req.params)
+	}
+
 	res
 		.status(200)
 		.setHeader('content-type', 'text/html')
@@ -70,7 +75,6 @@ app.get('/status', (_, res) => {
 		.json({ ok: true })
 })
 
-
 app.use(expressWinston.logger({
 	transports: [
 		new winston.transports.Console()
@@ -102,7 +106,6 @@ switch (version) {
 	default:
 		app.get('/', good)
 }
-
 
 
 app.listen(PORT, () => console.log(`App listening at port ${PORT} with version ${version}`));
