@@ -11,7 +11,10 @@ const version = process.env.VERSION || 'v1'
 const good = (req, res) => {
 
 	if (req.headers["content-type"].includes('json')) {
-		return res.json(req.params)
+		return res.json({
+			...req.params,
+			version
+		})
 	}
 
 	res
