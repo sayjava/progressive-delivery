@@ -54,9 +54,8 @@ install_rollout:
 
 
 deploy_app:
-	@kubectl apply -f deploy/service.yml
-	@kubectl apply -f deploy/ingress.yml
-	@kubectl apply -f deploy/deployment.yml
+	@kubectl apply -f deploy
+	@kubectl apply -f analysis
 
 .PHONY: deploy_app
 

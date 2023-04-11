@@ -24,3 +24,10 @@ spec:
       # stack as soon as the ReplicaSet are completely ready/available.
       # Rollouts can be resumed using: `kubectl argo rollouts promote ROLLOUT`
       autoPromotionEnabled: false
+      previewReplicaCount: 2
+      prePromotionAnalysis:
+        templates:
+          - templateName: smoke-test-success
+        args:
+          - name: service-name
+            value: app-preview.default.svc.cluster.local

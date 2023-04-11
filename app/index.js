@@ -5,7 +5,6 @@ const expressWinston = require('express-winston');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-
 const version = process.env.VERSION || 'v1'
 
 const good = (req, res) => {
