@@ -52,6 +52,11 @@ install_rollout:
 
 .PHONY: install_rollout
 
+install_cd:
+	@kubectl create namespace argocd
+	@kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+
+.PHONY: install_cd
 
 deploy_app:
 	@kubectl apply -f deploy
@@ -75,6 +80,12 @@ show_rollout:
 	@kubectl argo rollouts dashboard
 .PHONY: show_rollout
 
+show_cd:
+	@kubectl port-forward svc/argocd-server -n argocd 9090:443
+.PHONY: show_cd
+
 generate_traffic:
 	@bash traffic.sh
 .PHONY: generate_traffic
+
+aMAKb7E4WfH230J3
