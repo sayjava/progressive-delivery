@@ -6,10 +6,17 @@ metadata:
   name: app-blue-green
 spec:
   replicas: 5
-  workloadRef:
-    apiVersion: apps/v1
-    kind: Deployment
-    name: app-deployment
+  template:
+    metadata:
+      labels:
+        app: app
+    spec:
+      containers:
+        - name: app
+          image: app:v1
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 3000
   strategy:
     blueGreen:
       # activeService specifies the service to update with the new template hash at time of promotion.
@@ -23,7 +30,7 @@ spec:
       # immediately before the promotion. If omitted, the default behavior is to promote the new
       # stack as soon as the ReplicaSet are completely ready/available.
       # Rollouts can be resumed using: `kubectl argo rollouts promote ROLLOUT`
-      autoPromotionEnabled: true
+      autoPromotionEnabled: false
       previewReplicaCount: 2
       prePromotionAnalysis:
         templates:
