@@ -11,6 +11,9 @@ spec:
       app: app-blue-green
   template:
     spec:
+      metadata:
+        labels:
+          app: app-blue-green
       containers:
         - name: app
           image: app:v2
