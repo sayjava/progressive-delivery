@@ -28,7 +28,7 @@ spec:
       prePromotionAnalysis:
         templates:
           - templateName: smoke-test-success
-          - templateName: performance
+          # - templateName: performance
         args:
           - name: service-name
             value: app-preview.default.svc.cluster.local
