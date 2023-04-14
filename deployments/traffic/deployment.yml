@@ -19,7 +19,7 @@ spec:
             [
               "sh",
               "-c",
-              "while true; do curl -s -o /dev/null -w '%{http_code}' http://example.com/endpoint && echo -e '\033[0;32mSuccess\033[0m' || echo -e '\033[0;31mFailure\033[0m'; sleep 5; done",
+              "while true; do curl -s -o /dev/null -w '%{http_code}' http://blue-green.default.svc.cluster.local && echo -e '\033[0;32mSuccess\033[0m' || echo -e '\033[0;31mFailure\033[0m'; sleep 5; done",
             ]
         - name: endpoint-checker-preview
           image: alpine
@@ -27,5 +27,5 @@ spec:
             [
               "sh",
               "-c",
-              "while true; do curl -s -o /dev/null -w '%{http_code}' http://example.com/endpoint || echo -e '\033[0;31mFailure\033[0m'; echo -e '\033[0;32mSuccess\033[0m'; sleep 5; done",
+              "while true; do curl -s -o /dev/null -w '%{http_code}' http://blue-green-preview.default.svc.cluster.local || echo -e '\033[0;31mFailure\033[0m'; echo -e '\033[0;32mSuccess\033[0m'; sleep 5; done",
             ]
