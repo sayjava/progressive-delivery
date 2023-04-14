@@ -9,7 +9,7 @@ metadata:
     prometheus.io/port: "3000"
 spec:
   selector:
-    app: app
+    app: app-blue-green
   ports:
     - protocol: TCP
       port: 80
@@ -27,7 +27,7 @@ metadata:
     prometheus.io/port: "3000"
 spec:
   selector:
-    app: app
+    app: app-blue-green
   ports:
     - protocol: TCP
       port: 80
