@@ -3,21 +3,28 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Rollout
 metadata:
-  name: app-blue-green
+  name: blue-green
+  labels:
+    app: blue-green-app
 spec:
   replicas: 5
+  revisionHistoryLimit: 3
   selector:
     matchLabels:
-      app: app-blue-green
+      app: blue-green-app
   template:
     metadata:
       labels:
-        app: app-blue-green
+        app: blue-green-app
     spec:
       containers:
-        - name: app
+        - name: blue-green
           image: app:v2
           imagePullPolicy: Never
+          resources:
+            requests:
+              memory: 100Mi
+              cpu: 10m
           ports:
             - containerPort: 3000
   strategy:

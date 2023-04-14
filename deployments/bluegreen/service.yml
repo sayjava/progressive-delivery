@@ -1,7 +1,7 @@
 kind: Service
 apiVersion: v1
 metadata:
-  name: app-active
+  name: blue-green-prod
   annotations:
     prometheus.io/scrape: "true"
     prometheus.io.scheme: "http"
@@ -9,7 +9,7 @@ metadata:
     prometheus.io/port: "3000"
 spec:
   selector:
-    app: app-blue-green
+    app: blue-green-app
   ports:
     - protocol: TCP
       port: 80
@@ -19,7 +19,7 @@ spec:
 kind: Service
 apiVersion: v1
 metadata:
-  name: app-preview
+  name: blue-green-preview
   annotations:
     prometheus.io/scrape: "true"
     prometheus.io.scheme: "http"
@@ -27,7 +27,7 @@ metadata:
     prometheus.io/port: "3000"
 spec:
   selector:
-    app: app-blue-green
+    app: blue-green-app
   ports:
     - protocol: TCP
       port: 80

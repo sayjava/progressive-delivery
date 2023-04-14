@@ -8,9 +8,9 @@ metadata:
 spec:
   project: default
   sources:
-    repoURL: http://gitea-http.default.svc:3000/ray/progressive
+    repoURL: http://gitea-http.default.svc.cluster.local:3000/ray/progressive
     targetRevision: HEAD
-    path: rollouts/blue-green
+    path: deployments/blue-green
 
   # Destination cluster and namespace to deploy the application
   destination:

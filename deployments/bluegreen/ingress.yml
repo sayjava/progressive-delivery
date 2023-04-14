@@ -1,12 +1,12 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: app-active
+  name: blue-green-prod
   annotations:
     kubernetes.io/ingress.class: nginx
 spec:
   rules:
-    - host: app.local
+    - host: blue-green.local
       http:
         paths:
           - path: /
@@ -14,7 +14,7 @@ spec:
             backend:
               # Reference to a Service name, also specified in the Rollout spec.strategy.canary.stableService field
               service:
-                name: app-active
+                name: blue-green-prod
                 port:
                   number: 80
 
@@ -22,12 +22,12 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: app-preview
+  name: blue-green-preview
   annotations:
     kubernetes.io/ingress.class: nginx
 spec:
   rules:
-    - host: app-preview.local
+    - host: blue-green-preview.local
       http:
         paths:
           - path: /
@@ -35,6 +35,6 @@ spec:
             backend:
               # Reference to a Service name, also specified in the Rollout spec.strategy.canary.stableService field
               service:
-                name: app-preview
+                name: blue-green-preview
                 port:
                   number: 80
