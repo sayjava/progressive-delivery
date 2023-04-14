@@ -6,6 +6,9 @@ metadata:
   name: app-blue-green
 spec:
   replicas: 5
+  selector:
+    matchLabels:
+      app: app-blue-green
   template:
     metadata:
       labels:
