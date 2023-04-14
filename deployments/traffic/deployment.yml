@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: traffic-generator-prod
-          image: argoproj/load-tester:latest
+          image: curlimages/curl:latest
           command: [sh, -xec]
           args:
             - |
