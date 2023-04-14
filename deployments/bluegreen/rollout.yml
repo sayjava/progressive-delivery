@@ -10,9 +10,6 @@ spec:
     matchLabels:
       app: app-blue-green
   template:
-    metadata:
-      labels:
-        app: app
     spec:
       containers:
         - name: app
