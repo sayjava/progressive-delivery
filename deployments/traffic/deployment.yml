@@ -18,5 +18,16 @@ spec:
           command: [sh, -xec]
           args:
             - |
-              wrk -t5 -c10 -d2h http://blue-green-prod.default.svc.cluster.local
+              while true; do
+                  status_code=$(curl -s -o /dev/null -w "%{http_code}" http://blue-green-prod.default.svc.cluster.local)
+
+                  if [[ $status_code -eq 200 ]]; then
+                      echo -e "\033[32m$status_code\033[0m"
+                  else
+                      echo -e "\033[31m$status_code\033[0m"
+                  fi
+
+                  sleep 2
+              done
       restartPolicy: Always
+# wrk -t5 -c10 -d2h http://blue-green-prod.default.svc.cluster.local
