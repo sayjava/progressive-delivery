@@ -119,7 +119,7 @@
                     "datasource": "${DS_PROMETHEUS}",
                     "editorMode": "code",
                     "exemplar": false,
-                    "expr": "sum(rate(http_requests_total[2m])) by (version)",
+                    "expr": "sum(rate(http_requests_total{service='blue-green-prod'}[2m])) by (version)",
                     "format": "time_series",
                     "instant": false,
                     "interval": "",
