@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: traffic-generator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: traffic-generator
+  template:
+    metadata:
+      labels:
+        app: traffic-generator
+    spec:
+      containers:
+        - name: traffic-generator-prod
+          image: alpine
+          command:
+            [
+              "sh",
+              "-c",
+              "while true; do curl -s -o /dev/null -w '%{http_code}' http://example.com/endpoint && echo -e '\033[0;32mSuccess\033[0m' || echo -e '\033[0;31mFailure\033[0m'; sleep 5; done",
+            ]
+        - name: endpoint-checker-preview
+          image: alpine
+          command:
+            [
+              "sh",
+              "-c",
+              "while true; do curl -s -o /dev/null -w '%{http_code}' http://example.com/endpoint || echo -e '\033[0;31mFailure\033[0m'; echo -e '\033[0;32mSuccess\033[0m'; sleep 5; done",
+            ]
