@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
         - name: blue-green
-          image: app:v1
+          image: app:v2
           imagePullPolicy: Never
           resources:
             requests:
@@ -40,14 +40,14 @@ spec:
       # immediately before the promotion. If omitted, the default behavior is to promote the new
       # stack as soon as the ReplicaSet are completely ready/available.
       # Rollouts can be resumed using: `kubectl argo rollouts promote ROLLOUT`
-      autoPromotionEnabled: false
+      autoPromotionEnabled: true
       previewReplicaCount: 2
-      prePromotionAnalysis:
-        templates:
-          - templateName: smoke-test-success
-          # - templateName: performance
-        args:
-          - name: service-name
-            value: blue-green-preview.default.svc.cluster.local
-          - name: version
-            value: v1
+      # prePromotionAnalysis:
+      #   templates:
+      #     - templateName: smoke-test-success
+      #     # - templateName: performance
+      #   args:
+      #     - name: service-name
+      #       value: blue-green-preview.default.svc.cluster.local
+      #     - name: version
+      #       value: v1
