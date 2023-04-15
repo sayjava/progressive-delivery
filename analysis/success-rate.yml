@@ -6,7 +6,7 @@ spec:
   args:
     - name: version
   metrics:
-    - name: measure
+    - name: measure-success
       interval: 1m
       successCondition: result[0] > 0.95
       failureLimit: 3
@@ -15,5 +15,5 @@ spec:
         prometheus:
           address: http://prometheus-server.monitoring.svc.cluster.local
           query: |
-            sum(rate(http_requests_total{version="{{version}}", status="2XX"}[2m])) /
-            sum(rate(http_requests_total{version="{{version}}"}[2m]))
+            sum(rate(http_requests_total{version="{{args.version}}", status="2XX"}[2m])) /
+            sum(rate(http_requests_total{version="{{args.version}}"}[2m]))
