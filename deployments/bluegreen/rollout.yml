@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
         - name: blue-green
-          image: app:v2
+          image: app:v1
           imagePullPolicy: Never
           resources:
             requests:
@@ -29,25 +29,26 @@ spec:
             - containerPort: 3000
   strategy:
     blueGreen:
-      # activeService specifies the service to update with the new template hash at time of promotion.
-      # This field is mandatory for the blueGreen update strategy.
       activeService: blue-green-prod
-      # previewService specifies the service to update with the new template hash before promotion.
-      # This allows the preview stack to be reachable without serving production traffic.
-      # This field is optional.
+
       previewService: blue-green-preview
-      # autoPromotionEnabled disables automated promotion of the new stack by pausing the rollout
-      # immediately before the promotion. If omitted, the default behavior is to promote the new
-      # stack as soon as the ReplicaSet are completely ready/available.
-      # Rollouts can be resumed using: `kubectl argo rollouts promote ROLLOUT`
+
       autoPromotionEnabled: true
+
       previewReplicaCount: 2
-      prePromotionAnalysis:
+
+      scaleDownDelaySeconds: 30
+
+      # prePromotionAnalysis:
+      #   templates:
+      #     - templateName: smoke-test-success
+      #     - templateName: performance
+      #   args:
+      #     - name: service-name
+      #       value: blue-green-preview.default.svc.cluster.local
+      #     - name: version
+      #       value: v2
+
+      postPromotionAnalysis:
         templates:
           - templateName: smoke-test-success
-          - templateName: performance
-        args:
-          - name: service-name
-            value: blue-green-preview.default.svc.cluster.local
-          - name: version
-            value: v2
