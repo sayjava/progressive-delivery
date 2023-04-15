@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
         - name: blue-green
-          image: app:v2
+          image: app:v1
           imagePullPolicy: Never
           resources:
             requests:
@@ -49,10 +49,10 @@ spec:
       #     - name: version
       #       value: v2
 
-      # postPromotionAnalysis:
-      #   templates:
-      #     - templateName: success-rate
-      #     # - templateName: resources-usage
-      #   args:
-      #     - name: version
-      #       value: v1
+      postPromotionAnalysis:
+        templates:
+          - templateName: success-rate
+          # - templateName: resources-usage
+        args:
+          - name: version
+            value: v1
