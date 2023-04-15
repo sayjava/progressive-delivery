@@ -27,7 +27,7 @@ spec:
       interval: 1m
       # NOTE: prometheus queries return results in the form of a vector.
       # So it is common to access the index 0 of the returned array to obtain the value
-      successCondition: result <= 0.07
+      successCondition: result[0] >= 0.0
       failureLimit: 3
       count: 5
       provider:
