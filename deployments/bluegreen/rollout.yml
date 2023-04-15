@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
         - name: blue-green
-          image: app:slow
+          image: app:v1
           imagePullPolicy: Never
           resources:
             requests:
@@ -51,4 +51,8 @@ spec:
 
       postPromotionAnalysis:
         templates:
-          - templateName: smoke-test-success
+          - templateName: success-rate
+          # - templateName: resources-usage
+        args:
+          - name: version
+            value: v1
