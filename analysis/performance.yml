@@ -21,7 +21,7 @@ spec:
                     command: [sh, -c, -x, -e]
                     args:
                       - |
-                        wrk -t10 -c40 -d1m http://{{ args.service-name }}
+                        wrk -t5 -c10 -d2m http://{{ args.service-name }}
 
     - name: measure
       interval: 1m
