@@ -38,7 +38,7 @@ spec:
       # analysis:
       #   templates:
       #     - templateName: performance
-      dynamicStableScale: true
+      # dynamicStableScale: true
       # abortScaleDownDelaySeconds: 600
       # maxUnavailable: 2
       # maxSurge: '25%'
