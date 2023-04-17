@@ -29,6 +29,12 @@ spec:
             - containerPort: 3000
   strategy:
     canary:
+      stableMetadata:
+        labels:
+          role: prod
+      canaryMetadata:
+        labels:
+          role: preview
       # analysis:
       #   templates:
       #     - templateName: performance
