@@ -3,6 +3,12 @@
 # grafana.monitoring.svc.cluster.local
 # prometheus-prometheus-pushgateway.monitoring.svc.cluster.local
 
+setup:
+	@kubectl create namespace argo-rollouts
+	@kubectl create namespace argocd
+	@kubectl create namespace monitoring
+.PHONY: setup
+
 build_apps:
 	@docker build --build-arg version='v1' -t app:v1 app
 	@docker build --build-arg version='v2' -t app:v2 app
@@ -19,7 +25,6 @@ build_and_load_apps: build_apps
 
 install_grafana:
 	@helm repo add grafana https://grafana.github.io/helm-charts
-
 	@helm install grafana \
 		--namespace=monitoring \
 		--set=adminUser=admin \
@@ -31,38 +36,37 @@ install_grafana:
 
 install_prometheus:
 	@helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
-
 	@helm install prometheus prometheus-community/prometheus --create-namespace --namespace=monitoring
 
 .PHONY: install_prometheus
 
-install_metrics: install_prometheus install_grafana
+install_ingress:
+	@helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+	@helm repo update
+	@helm -n ingress-nginx install ingress-nginx ingress-nginx/ingress-nginx --create-namespace
+
 	@helm upgrade ingress-nginx ingress-nginx \
 		--repo https://kubernetes.github.io/ingress-nginx \
 		--namespace ingress-nginx \
 		--set controller.metrics.enabled=true \
 		--set-string controller.podAnnotations."prometheus\.io/scrape"="true" \
 		--set-string controller.podAnnotations."prometheus\.io/port"="10254"
+.PHONY: install_ingress
 
-.PHONY: install_metrics
-
-install_rollout:
-	@kubectl create namespace argo-rollouts
+install_argo:
 	@kubectl apply -n argo-rollouts -f https://github.com/argoproj/argo-rollouts/releases/latest/download/install.yaml
-
-.PHONY: install_rollout
-
-install_cd:
-	@kubectl create namespace argocd
 	@kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
 
-.PHONY: install_cd
+.PHONY: install_argo
 
-deploy_app:
-	@kubectl apply -f deploy
+install_gitea:
+	@helm repo add gitea-charts https://dl.gitea.io/charts/
+	@helm install gitea gitea-charts/gitea
+.PHONY: install_gitea
+
+deploy_analysis:
 	@kubectl apply -f analysis
-
-.PHONY: deploy_app
+.PHONY: deploy_analysis
 
 show_prometheus:
 	@kubectl port-forward --namespace=monitoring svc/prometheus-server  4000:80
