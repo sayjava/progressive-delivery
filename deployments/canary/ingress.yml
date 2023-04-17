@@ -1,0 +1,38 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: canary-prod
+  annotations:
+    kubernetes.io/ingress.class: nginx
+spec:
+  rules:
+    - host: canary.local
+      http:
+        paths:
+          - path: /
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: canary-prod
+                port:
+                  number: 80
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: canary-preview
+  annotations:
+    kubernetes.io/ingress.class: nginx
+spec:
+  rules:
+    - host: canary-preview.local
+      http:
+        paths:
+          - path: /
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: canary-preview
+                port:
+                  number: 80

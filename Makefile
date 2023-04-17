@@ -84,6 +84,10 @@ show_cd:
 	@kubectl port-forward svc/argocd-server -n argocd 9090:443
 .PHONY: show_cd
 
+show_gitea:
+	@kubectl port-forward svc/gitea-http 3000:3000
+.PHONY: show_gitea
+
 generate_traffic:
 	@bash traffic.sh
 .PHONY: generate_traffic
