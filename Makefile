@@ -104,24 +104,21 @@ create_canary_app:
 	--dest-namespace default
 .PHONY: create_canary_app
 
-create_traffic_app:
-	argocd app create traffic \
-	--repo http://gitea-http.default.svc.cluster.local:3000/ray/progressive \
-	--path deployments/traffic \
-	--dest-server https://kubernetes.default.svc \
-	--dest-namespace default
-.PHONY: create_traffic_app
 
-create_gb_app:
+create_bg_app:
 	argocd app create blue-green \
 	--repo http://gitea-http.default.svc.cluster.local:3000/ray/progressive \
-	--path deployments/traffic \
+	--path deployments/bluegreen \
 	--dest-server https://kubernetes.default.svc \
 	--dest-namespace default
 .PHONY: create_bg_app
 
 traffic:
-	wrk -t5 -c10 -d2h http://prod.local:8080
+	wrk -t5 -c5 -d2h http://prod.local:8080
 .PHONY: traffic
 
+# kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
+
 # aMAKb7E4WfH230J3
+
+# VmUkEYkgGLyWJ7s2
