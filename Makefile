@@ -116,4 +116,8 @@ create_gb_app:
 	--dest-namespace default
 .PHONY: create_bg_app
 
+traffic:
+	wrk -t5 -c10 -d2h http://prod.local:8080
+.PHONY: traffic
+
 # aMAKb7E4WfH230J3
