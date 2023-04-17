@@ -6,6 +6,7 @@ metadata:
   name: canary
   labels:
     app: canary-app
+    version: v1
 spec:
   replicas: 10
   revisionHistoryLimit: 2
@@ -39,16 +40,43 @@ spec:
       #   templates:
       #     - templateName: performance
       dynamicStableScale: true
+      # scaleDownDelaySeconds: 300
       # abortScaleDownDelaySeconds: 600
       # maxUnavailable: 2
-      # maxSurge: '25%'
+      scaleDownDelayRevisionLimit: 2
+      maxSurge: 10%
       # trafficRouting
       canaryService: canary-preview
       stableService: canary-prod
+
+      # Keep running performance test in the background
+      analysis:
+        templates:
+          - templateName: performance
+        args:
+          - name: version
+            value: metadata.labels['version']
+
       trafficRouting:
         nginx:
           stableIngress: canary-prod
+
+      # Release steps
       steps:
-        - setWeight: 40
-        - pause: {}
-        - pause: { duration: 10 }
+        # Scale initial production traffic to 0
+        - setWeight: 0
+        # Smoke Test it
+        - analysis:
+            templates:
+              - templateName: success-rate
+            args:
+              - name: version
+                value: metadata.labels['version']
+        # Scale  production traffic to 20
+        - setWeight: 20
+        # Pause for manual approval
+        # - pause: {}
+
+        # Pause for a set time
+        - pause:
+            duration: 10m

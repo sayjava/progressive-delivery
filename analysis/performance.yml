@@ -5,24 +5,7 @@ metadata:
 spec:
   args:
     - name: version
-    - name: service-name
   metrics:
-    - name: traffic
-      failureLimit: 1
-      provider:
-        job:
-          spec:
-            template:
-              spec:
-                restartPolicy: Never
-                containers:
-                  - name: load-tester
-                    image: argoproj/load-tester:latest
-                    command: [sh, -c, -x, -e]
-                    args:
-                      - |
-                        wrk -t5 -c10 -d2m http://{{ args.service-name }}
-
     - name: measure
       interval: 1m
       # NOTE: prometheus queries return results in the form of a vector.
