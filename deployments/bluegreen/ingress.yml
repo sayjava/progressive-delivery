@@ -6,7 +6,7 @@ metadata:
     kubernetes.io/ingress.class: nginx
 spec:
   rules:
-    - host: blue-green.local
+    - host: prod.local
       http:
         paths:
           - path: /
@@ -27,7 +27,7 @@ metadata:
     kubernetes.io/ingress.class: nginx
 spec:
   rules:
-    - host: blue-green-preview.local
+    - host: preview.local
       http:
         paths:
           - path: /

@@ -18,5 +18,5 @@ spec:
           command: [sh, -xec]
           args:
             - |
-              wrk -t5 -c10 -d2h http://blue-green-prod.default.svc.cluster.local
+              wrk -t5 -c10 -d2h http://prod.default.svc.cluster.local
       restartPolicy: Always
