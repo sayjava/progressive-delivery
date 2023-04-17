@@ -45,6 +45,9 @@ spec:
       # trafficRouting
       canaryService: canary-preview
       stableService: canary-prod
+      trafficRouting:
+        nginx:
+          stableIngress: canary-prod
       steps:
         - setWeight: 20
         - pause: {}
