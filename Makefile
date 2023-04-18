@@ -12,6 +12,8 @@ setup:
 build_apps:
 	@docker build --build-arg version='v1' -t app:v1 app
 	@docker build --build-arg version='v2' -t app:v2 app
+	@docker build --build-arg version='v3' -t app:v3 app
+	@docker build --build-arg version='v4' -t app:v4 app
 	@docker build --build-arg version='slow' -t app:slow app
 	@docker build --build-arg version='error' -t app:error app
 	@docker build --build-arg version='quit' -t app:quit app

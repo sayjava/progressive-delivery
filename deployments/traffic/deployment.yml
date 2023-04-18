@@ -17,6 +17,20 @@ spec:
         - name: prod-load-tester
           image: argoproj/load-tester:latest
           command: [sh, -c, -x, -e]
+          # args: |
+          #     # wrk -t1 -c5 -d5h http://blue-green-prod.default.svc
           args:
             - |
-              wrk -t1 -c5 -d5h http://blue-green-prod.default.svc
+              while true; do
+                  status_code=$(curl -s -o /dev/null -w "%{http_code}" http://blue-green-prod.default.svc)
+                  status_code=$(curl -s -o /dev/null -w "%{http_code}" http://blue-green-prod.default.svc)
+                  status_code=$(curl -s -o /dev/null -w "%{http_code}" http://blue-green-prod.default.svc)
+
+                  if [[ $status_code -eq 200 ]]; then
+                      echo -e "\033[32m$status_code\033[0m"
+                  else
+                      echo -e "\033[31m$status_code\033[0m"
+                  fi
+
+                  sleep 1
+              done
