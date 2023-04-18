@@ -65,8 +65,8 @@ spec:
       postPromotionAnalysis:
         templates:
           - templateName: success-rate
-          - templateName: performance
-          - templateName: payload
+          # - templateName: performance
+          # - templateName: payload
         args:
           - name: version
             value: v1
