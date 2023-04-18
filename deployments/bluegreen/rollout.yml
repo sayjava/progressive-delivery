@@ -23,7 +23,7 @@ spec:
     spec:
       containers:
         - name: blue-green
-          image: app:v1
+          image: app:v2
           imagePullPolicy: Never
           resources:
             requests:
@@ -61,7 +61,7 @@ spec:
           - name: service-name
             value: blue-green-preview.default.svc
           - name: version
-            value: v1
+            value: v2
 
       postPromotionAnalysis:
         templates:
@@ -71,4 +71,4 @@ spec:
           # - templateName: payload
         args:
           - name: version
-            value: v1
+            value: v2
