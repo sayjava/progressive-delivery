@@ -114,7 +114,7 @@ create_bg_app:
 	--dest-server https://kubernetes.default.svc \
 	--dest-namespace default \
 	--sync-policy auto \
-	--revision-history-limit 2 \
+	--revision-history-limit 1 \
 	--label app=blue-green \
 	--auto-prune 
 .PHONY: create_bg_app
