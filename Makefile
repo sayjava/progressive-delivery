@@ -112,7 +112,11 @@ create_bg_app:
 	--repo http://gitea-http.default.svc.cluster.local:3000/ray/progressive \
 	--path deployments/bluegreen \
 	--dest-server https://kubernetes.default.svc \
-	--dest-namespace default
+	--dest-namespace default \
+	--sync-policy auto \
+	--revision-history-limit 2 \
+	--label app=blue-green \
+	--auto-prune 
 .PHONY: create_bg_app
 
 create_traffic_app:
