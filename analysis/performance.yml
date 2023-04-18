@@ -7,6 +7,7 @@ spec:
     - name: version
   metrics:
     - name: requests_served_in_seconds
+      initialDelay: 2m
       interval: 1m
       # 95% of requests are served within seconds
       successCondition: result[0] >= 0.095
@@ -16,4 +17,4 @@ spec:
         prometheus:
           address: http://prometheus-server.monitoring.svc.cluster.local
           query: |
-            histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket{version="{{args.version}}"}[5m])) by (le))
+            histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket{version="{{args.version}}"}[20m])) by (le))

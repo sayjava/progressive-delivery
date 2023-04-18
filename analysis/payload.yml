@@ -8,6 +8,7 @@ spec:
   metrics:
     - name: measure
       interval: 1m
+      initialDelay: 2m
       failureCondition: result > 0.1
       successCondition: isNaN(result) || result < 0.1
       failureLimit: 3
@@ -16,5 +17,5 @@ spec:
         prometheus:
           address: http://prometheus-server.monitoring.svc.cluster.local
           query: |
-            (histogram_quantile(0.95, sum(rate(http_response_length_bytes_bucket{version="{args.version}"}[5m])) by (le)) /
-            histogram_quantile(0.95, sum(rate(http_response_length_bytes_bucket{version!="{args.version}"}[5m]))) > 0.1 
+               (histogram_quantile(0.95, sum(rate(http_response_length_bytes_bucket{version="{{args.version}}"}[20m])) by (le))) / 
+               (histogram_quantile(0.95, sum(rate(http_response_length_bytes_bucket{version!="{{args.version}}"}[20m])) by (le)))
