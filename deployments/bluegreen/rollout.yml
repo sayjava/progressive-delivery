@@ -65,7 +65,7 @@ spec:
 
       postPromotionAnalysis:
         templates:
-          - always-pass
+          - templateName: always-pass
           # - templateName: success-rate
           # - templateName: performance
           # - templateName: payload
