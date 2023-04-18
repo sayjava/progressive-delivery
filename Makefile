@@ -114,7 +114,7 @@ create_bg_app:
 .PHONY: create_bg_app
 
 traffic:
-	wrk -t2 -c2 -d2h http://prod.local:8080
+	wrk -t1 -c1 -d2h http://prod.local:8080
 .PHONY: traffic
 
 # kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d

@@ -42,7 +42,6 @@ spec:
       prePromotionAnalysis:
         templates:
           - templateName: smoke-test-success
-          - templateName: performance
         args:
           - name: service-name
             value: blue-green-preview.default.svc.cluster.local
@@ -52,6 +51,7 @@ spec:
       postPromotionAnalysis:
         templates:
           - templateName: success-rate
+          - templateName: performance
           # - templateName: resources-usage
         args:
           - name: version
