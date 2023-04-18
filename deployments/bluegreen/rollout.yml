@@ -35,7 +35,7 @@ spec:
   
   # The maximum time in seconds in which a rollout must make progress during
   # an update, before it is considered to be failed
-  progressDeadlineSeconds: 120
+  progressDeadlineSeconds: 320
 
   # Whether to abort the update when ProgressDeadlineSeconds is exceeded.
   # Optional and default is false.
