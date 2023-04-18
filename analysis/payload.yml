@@ -6,11 +6,11 @@ spec:
   args:
     - name: version
   metrics:
-    - name: measure
+    - name: payload-measurement
       interval: 1m
       initialDelay: 2m
       failureCondition: result > 0.1
-      successCondition: isNaN(result) || result < 0.1
+      successCondition: isNaN(result[0]) || result[0] < 0.1
       failureLimit: 3
       count: 5
       provider:

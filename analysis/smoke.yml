@@ -29,6 +29,7 @@ spec:
     - name: service-name
   metrics:
     - name: smoke
+      initialDelay: 1m
       successCondition: "version == 'some-strange-value'"
       provider:
         web:
