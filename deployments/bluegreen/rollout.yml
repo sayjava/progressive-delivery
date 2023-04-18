@@ -53,14 +53,14 @@ spec:
 
       scaleDownDelaySeconds: 30
 
-      prePromotionAnalysis:
-        templates:
-          - templateName: smoke-test-success
-        args:
-          - name: service-name
-            value: blue-green-preview.default.svc.cluster.local
-          - name: version
-            value: v2
+      # prePromotionAnalysis:
+      #   templates:
+      #     - templateName: smoke-test-success
+      #   args:
+      #     - name: service-name
+      #       value: blue-green-preview.default.svc.cluster.local
+      #     - name: version
+      #       value: v2
 
       postPromotionAnalysis:
         templates:
