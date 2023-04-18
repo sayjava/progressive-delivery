@@ -13,6 +13,13 @@ spec:
   # Defaults to 10
   revisionHistoryLimit: 2
 
+  # The rollback window provides a way to fast track deployments to
+  rollbackWindow:
+    revisions: 1
+
+  # Pause allows a user to manually pause a rollout at any time.
+  paused: true
+
   selector:
     matchLabels:
       app: blue-green-app
@@ -23,7 +30,7 @@ spec:
     spec:
       containers:
         - name: blue-green
-          image: app:v1
+          image: app:v2
           imagePullPolicy: Never
           resources:
             requests:
@@ -35,7 +42,7 @@ spec:
   
   # The maximum time in seconds in which a rollout must make progress during
   # an update, before it is considered to be failed
-  progressDeadlineSeconds: 120
+  progressDeadlineSeconds: 180
 
   # Whether to abort the update when ProgressDeadlineSeconds is exceeded.
   # Optional and default is false.
@@ -47,11 +54,19 @@ spec:
 
       previewService: blue-green-preview
 
-      autoPromotionEnabled: true
+      # Indicates if the rollout should automatically promote the new ReplicaSet
+      # to the active service or enter a paused state.
+      autoPromotionEnabled: false
 
-      previewReplicaCount: 2
+      # The number of replicas to run under the preview service before the switchover.
+      previewReplicaCount: 1
 
+      # Adds a delay before scaling down the previous ReplicaSet.
       scaleDownDelaySeconds: 30
+
+      # Limits the number of old RS that can run at once before getting scaled
+      # down. Defaults to nil
+      scaleDownDelayRevisionLimit: 1
 
       prePromotionAnalysis:
         templates:
@@ -61,14 +76,14 @@ spec:
           - name: service-name
             value: blue-green-preview.default.svc
           - name: version
-            value: v1
+            value: v2
 
       postPromotionAnalysis:
         templates:
-          - templateName: always-fail
+          - templateName: always-pass
           # - templateName: success-rate
           # - templateName: performance
           # - templateName: payload
         args:
           - name: version
-            value: v1
+            value: v2
