@@ -1,35 +1,13 @@
 kind: AnalysisTemplate
 apiVersion: argoproj.io/v1alpha1
 metadata:
-  name: smoke-test-success
+  name: smoke-test
 spec:
   args:
     - name: service-name
   metrics:
     - name: smoke
       successCondition: "result != 'error'"
-      provider:
-        web:
-          method: GET
-          timeoutSeconds: 20
-          # This can be a variable passed into
-          url: "http://{{ args.service-name }}"
-          headers:
-            - key: Content-Type
-              value: "application/json"
-          jsonPath: "{$.version}"
-
----
-kind: AnalysisTemplate
-apiVersion: argoproj.io/v1alpha1
-metadata:
-  name: smoke-test-fail
-spec:
-  args:
-    - name: service-name
-  metrics:
-    - name: smoke
-      successCondition: "version == 'some-strange-value'"
       provider:
         web:
           method: GET

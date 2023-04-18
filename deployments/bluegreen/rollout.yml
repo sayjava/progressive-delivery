@@ -23,7 +23,7 @@ spec:
     spec:
       containers:
         - name: blue-green
-          image: app:v4
+          image: app:v1
           imagePullPolicy: Never
           resources:
             requests:
@@ -55,18 +55,20 @@ spec:
 
       prePromotionAnalysis:
         templates:
-          - templateName: smoke-test-success
+          - templateName: smoke-test
+          - templateName: always-pass
         args:
           - name: service-name
             value: blue-green-preview.default.svc
           - name: version
-            value: v4
+            value: v1
 
       postPromotionAnalysis:
         templates:
+          - always-pass
           # - templateName: success-rate
           # - templateName: performance
           # - templateName: payload
         args:
           - name: version
-            value: v4
+            value: v1
