@@ -7,7 +7,7 @@ spec:
     - name: version
   metrics:
     - name: requests_served_in_seconds
-      initialDelay: 2m
+      initialDelay: 1m
       interval: 1m
       # 95% of requests are served within seconds
       successCondition: result[0] >= 0.095

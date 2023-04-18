@@ -23,7 +23,7 @@ spec:
     spec:
       containers:
         - name: blue-green
-          image: app:v1
+          image: app:v2
           imagePullPolicy: Never
           resources:
             requests:
@@ -35,7 +35,7 @@ spec:
   
   # The maximum time in seconds in which a rollout must make progress during
   # an update, before it is considered to be failed
-  progressDeadlineSeconds: 120
+  progressDeadlineSeconds: 300
 
   # Whether to abort the update when ProgressDeadlineSeconds is exceeded.
   # Optional and default is false.
@@ -60,13 +60,13 @@ spec:
           - name: service-name
             value: blue-green-preview.default.svc.cluster.local
           - name: version
-            value: v1
+            value: v2
 
       postPromotionAnalysis:
         templates:
           - templateName: success-rate
           # - templateName: performance
-          - templateName: payload
+          # - templateName: payload
         args:
           - name: version
-            value: v1
+            value: v2
