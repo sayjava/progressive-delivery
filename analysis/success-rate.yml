@@ -8,6 +8,7 @@ spec:
   metrics:
     - name: measure-success
       interval: 1m
+      initialDelay: 2m
       successCondition: len(result) > 0 && result[0] > 0.95
       failureLimit: 3
       count: 5
