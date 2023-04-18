@@ -23,7 +23,7 @@ spec:
     spec:
       containers:
         - name: blue-green
-          image: app:v1
+          image: app:v2
           imagePullPolicy: Never
           resources:
             requests:
@@ -62,11 +62,11 @@ spec:
       #     - name: version
       #       value: v2
 
-      # postPromotionAnalysis:
-      #   templates:
-      #     - templateName: success-rate
-      #     - templateName: performance
-      #     - templateName: payload
-      #   args:
-      #     - name: version
-      #       value: v4
+      postPromotionAnalysis:
+        templates:
+          - templateName: success-rate
+          # - templateName: performance
+          # - templateName: payload
+        args:
+          - name: version
+            value: v2
