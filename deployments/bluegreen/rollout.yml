@@ -33,7 +33,7 @@ spec:
             - containerPort: 3000
           env:
             - name: version
-              value: v3
+              value: v4
   
   
   # The maximum time in seconds in which a rollout must make progress during
@@ -63,7 +63,7 @@ spec:
           - name: service-name
             value: blue-green-preview.default.svc.cluster.local
           - name: version
-            value: v3
+            value: v4
 
       postPromotionAnalysis:
         templates:
@@ -72,4 +72,4 @@ spec:
           # - templateName: payload
         args:
           - name: version
-            value: v3
+            value: v4
