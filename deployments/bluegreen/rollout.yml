@@ -23,7 +23,7 @@ spec:
     spec:
       containers:
         - name: blue-green
-          image: app:v3
+          image: app:v4
           imagePullPolicy: Never
           resources:
             requests:
@@ -53,20 +53,20 @@ spec:
 
       scaleDownDelaySeconds: 30
 
-      # prePromotionAnalysis:
-      #   templates:
-      #     - templateName: smoke-test-success
-      #   args:
-      #     - name: service-name
-      #       value: blue-green-preview.default.svc
-      #     - name: version
-      #       value: v3
+      prePromotionAnalysis:
+        templates:
+          - templateName: smoke-test-success
+        args:
+          - name: service-name
+            value: blue-green-preview.default.svc
+          - name: version
+            value: v4
 
       postPromotionAnalysis:
         templates:
-          - templateName: success-rate
+          # - templateName: success-rate
           # - templateName: performance
           # - templateName: payload
         args:
           - name: version
-            value: v3
+            value: v4
