@@ -114,7 +114,7 @@ create_bg_app:
 .PHONY: create_bg_app
 
 create_traffic_app:
-	argocd app create blue-green \
+	argocd app create traffic-app \
 	--repo http://gitea-http.default.svc.cluster.local:3000/ray/progressive \
 	--path deployments/traffic \
 	--dest-server https://kubernetes.default.svc \

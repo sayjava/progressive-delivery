@@ -14,12 +14,6 @@ spec:
     spec:
       restartPolicy: Always
       containers:
-        - name: preview-load-tester
-          image: argoproj/load-tester:latest
-          command: [sh, -c, -x, -e]
-          args:
-            - |
-              wrk -t3 -c10 -d2h http://blue-green-preview.default.svc
         - name: prod-load-tester
           image: argoproj/load-tester:latest
           command: [sh, -c, -x, -e]
