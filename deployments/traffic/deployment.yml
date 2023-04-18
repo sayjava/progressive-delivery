@@ -15,7 +15,7 @@ spec:
       restartPolicy: Always
       containers:
         - name: prod-load-tester
-          image: argoproj/load-tester:latest
+          image: alpine/curl:3.14
           command: [sh, -c, -x, -e]
           # args: |
           #     # wrk -t1 -c5 -d5h http://blue-green-prod.default.svc
