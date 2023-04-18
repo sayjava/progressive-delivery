@@ -23,7 +23,7 @@ spec:
     spec:
       containers:
         - name: blue-green
-          image: app:v2
+          image: app:v1
           imagePullPolicy: Never
           resources:
             requests:
@@ -60,13 +60,13 @@ spec:
       #     - name: service-name
       #       value: blue-green-preview.default.svc.cluster.local
       #     - name: version
-      #       value: v2
+      #       value: v1
 
-      postPromotionAnalysis:
-        templates:
-          - templateName: success-rate
-          # - templateName: performance
-          # - templateName: payload
-        args:
-          - name: version
-            value: v2
+      # postPromotionAnalysis:
+      #   templates:
+      #     - templateName: success-rate
+      #     - templateName: performance
+      #     - templateName: payload
+      #   args:
+      #     - name: version
+      #       value: v2
