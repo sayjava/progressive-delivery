@@ -18,7 +18,7 @@ spec:
     revisions: 1
 
   # Pause allows a user to manually pause a rollout at any time.
-  paused: true
+  paused: false
 
   selector:
     matchLabels:
@@ -68,22 +68,22 @@ spec:
       # down. Defaults to nil
       scaleDownDelayRevisionLimit: 1
 
-      prePromotionAnalysis:
-        templates:
-          - templateName: smoke-test
-          - templateName: always-pass
-        args:
-          - name: service-name
-            value: blue-green-preview.default.svc
-          - name: version
-            value: v2
+      # prePromotionAnalysis:
+      #   templates:
+      #     - templateName: smoke-test
+      #     - templateName: always-pass
+      #   args:
+      #     - name: service-name
+      #       value: blue-green-preview.default.svc
+      #     - name: version
+      #       value: v2
 
-      postPromotionAnalysis:
-        templates:
-          - templateName: always-pass
-          # - templateName: success-rate
-          # - templateName: performance
-          # - templateName: payload
-        args:
-          - name: version
-            value: v2
+      # postPromotionAnalysis:
+      #   templates:
+      #     - templateName: always-pass
+      #     - templateName: success-rate
+      #     - templateName: performance
+      #     - templateName: payload
+      #   args:
+      #     - name: version
+      #       value: v2

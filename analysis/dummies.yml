@@ -21,9 +21,6 @@ spec:
               restartPolicy: Never
           backoffLimit: 0
 ---
-# This AnalysisTemplate will run a Kubernetes Job every 5 seconds, with a 50% chance of failure.
-# When the number of accumulated failures exceeds failureLimit, it will cause the analysis run to
-# fail, and subsequently cause the rollout or experiment to abort.
 kind: AnalysisTemplate
 apiVersion: argoproj.io/v1alpha1
 metadata:
@@ -44,5 +41,33 @@ spec:
                 image: alpine:3.8
                 command: [sh, -c]
                 args: [exit -1]
+              restartPolicy: Never
+          backoffLimit: 0
+
+---
+kind: AnalysisTemplate
+apiVersion: argoproj.io/v1alpha1
+metadata:
+  name: slow-fail
+spec:
+  metrics:
+  - name: slow-fail
+    count: 5
+    interval: 5s
+    failureLimit: 3
+    provider:
+      job:
+        spec:
+          template:
+            spec:
+              containers:
+              - name: sleep
+                image: alpine:3.8
+                command: [sh, -c, -x, -e]
+                args: 
+                  - |
+                    echo "Running slow fail"
+                    sleep 30s
+                    exit -1
               restartPolicy: Never
           backoffLimit: 0
