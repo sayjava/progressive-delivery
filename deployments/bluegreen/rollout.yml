@@ -23,7 +23,7 @@ spec:
     spec:
       containers:
         - name: blue-green
-          image: app:v1
+          image: app:v2
           imagePullPolicy: Never
           resources:
             requests:
@@ -58,7 +58,7 @@ spec:
       #     - templateName: smoke-test-success
       #   args:
       #     - name: service-name
-      #       value: blue-green-preview.default.svc.cluster.local
+      #       value: blue-green-preview.default.svc
       #     - name: version
       #       value: v3
 
@@ -69,4 +69,4 @@ spec:
           # - templateName: payload
         args:
           - name: version
-            value: v1
+            value: v2

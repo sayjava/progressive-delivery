@@ -10,7 +10,7 @@ spec:
       initialDelay: 1m
       interval: 1m
       # 95% of requests are served within seconds
-      successCondition: result[0] >= 0.095
+      successCondition: len(result) > 0 && result[0] >= 0.095
       failureLimit: 3
       count: 5
       provider:
