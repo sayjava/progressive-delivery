@@ -23,7 +23,7 @@ spec:
     spec:
       containers:
         - name: blue-green
-          image: app:v2
+          image: app:v1
           imagePullPolicy: Never
           resources:
             requests:
@@ -69,4 +69,4 @@ spec:
           # - templateName: payload
         args:
           - name: version
-            value: v2
+            value: v1
