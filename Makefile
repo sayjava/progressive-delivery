@@ -21,7 +21,7 @@ build_apps:
 .PHONY: build_apps
 
 build_and_load_apps: build_apps
-	@kind load docker-image   app:v1 app:v2 app:slow app:error app:quit
+	@kind load docker-image   app:v1 app:v2 app:v3 app:v4 app:slow app:error app:quit
 
 .PHONY: build_and_load_apps
 

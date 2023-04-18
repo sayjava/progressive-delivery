@@ -23,7 +23,7 @@ spec:
     spec:
       containers:
         - name: blue-green
-          image: app:v3
+          image: app:v4
           imagePullPolicy: Never
           resources:
             requests:
@@ -35,7 +35,7 @@ spec:
   
   # The maximum time in seconds in which a rollout must make progress during
   # an update, before it is considered to be failed
-  progressDeadlineSeconds: 320
+  progressDeadlineSeconds: 120
 
   # Whether to abort the update when ProgressDeadlineSeconds is exceeded.
   # Optional and default is false.
@@ -69,4 +69,4 @@ spec:
           # - templateName: payload
         args:
           - name: version
-            value: v3
+            value: v4
