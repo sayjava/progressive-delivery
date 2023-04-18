@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: traffic-generator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: traffic-generator
+  template:
+    metadata:
+      labels:
+        app: traffic-generator
+    spec:
+      restartPolicy: Always
+      containers:
+        - name: preview-load-tester
+          image: argoproj/load-tester:latest
+          command: [sh, -c, -x, -e]
+          args:
+            - |
+              wrk -t3 -c10 -d2h http://blue-green-preview.default.svc
+        - name: prod-load-tester
+          image: argoproj/load-tester:latest
+          command: [sh, -c, -x, -e]
+          args:
+            - |
+              wrk -t3 -c10 -d2h http://blue-green-prod.default.svc

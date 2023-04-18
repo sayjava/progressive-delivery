@@ -113,6 +113,14 @@ create_bg_app:
 	--dest-namespace default
 .PHONY: create_bg_app
 
+create_traffic_app:
+	argocd app create blue-green \
+	--repo http://gitea-http.default.svc.cluster.local:3000/ray/progressive \
+	--path deployments/traffic \
+	--dest-server https://kubernetes.default.svc \
+	--dest-namespace default
+.PHONY: create_traffic_app
+
 traffic:
 	wrk -t1 -c1 -d2h http://prod.local:8080
 .PHONY: traffic
