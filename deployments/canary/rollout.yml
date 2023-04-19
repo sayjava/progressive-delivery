@@ -74,7 +74,7 @@ spec:
 
         # Start 2 pods for testing
         - setCanaryScale: 
-          - replicas: 2
+            replicas: 2
 
         # Run some analysis on the non released version
         - analysis:
