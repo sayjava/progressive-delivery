@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
         - name: canary
-          image: app:v2
+          image: app:v3
           imagePullPolicy: Never
           resources:
             requests:
@@ -60,7 +60,7 @@ spec:
           - templateName: performance
         args:
           - name: version
-            value: metadata.labels['version']
+            value: v3
 
       trafficRouting:
         nginx:
@@ -80,9 +80,6 @@ spec:
         - analysis:
             templates:
               - templateName: always-pass
-            args:
-              - name: version
-                value: metadata.labels['version']
         
         # Reset the number of pods to match traffic.
         # If this is not done, then 20% of the traffic will be 
@@ -104,7 +101,7 @@ spec:
               - templateName: always-pass
             args:
               - name: version
-                value: metadata.labels['version']
+                value: v3
         
         - setWeight: 40
 
