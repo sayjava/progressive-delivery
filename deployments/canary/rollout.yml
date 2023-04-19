@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
         - name: canary
-          image: app:v3
+          image: app:v2
           imagePullPolicy: Never
           resources:
             requests:
@@ -96,7 +96,7 @@ spec:
 
         # Pause the rollout for 2m so that we can conduct some analysis
         - pause:
-          duration: 2m
+            duration: 2m
 
         # Run some analysis again since we have exposed the release to some production traffic
         - analysis:
