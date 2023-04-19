@@ -8,7 +8,7 @@ metadata:
     app: canary-app
     version: v1
 spec:
-  replicas: 10
+  replicas: 5
   revisionHistoryLimit: 2
   selector:
     matchLabels:
@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
         - name: canary
-          image: app:v1
+          image: app:v2
           imagePullPolicy: Never
           resources:
             requests:
@@ -36,17 +36,22 @@ spec:
       canaryMetadata:
         labels:
           role: preview
-      # analysis:
-      #   templates:
-      #     - templateName: performance
-      dynamicStableScale: true
-      # scaleDownDelaySeconds: 300
-      # abortScaleDownDelaySeconds: 600
-      # maxUnavailable: 2
+
+      # How long to keep the old pods around
+      # before they are killed off
+      scaleDownDelaySeconds: 30
+
+      # During an abort, how long to keep the pods around for
+      abortScaleDownDelaySeconds: 120
+
+      maxUnavailable: 2
+      
+      # How many old versions should we keep around in case
+      # of a manual rollback
       scaleDownDelayRevisionLimit: 2
-      maxSurge: 10%
-      # trafficRouting
+      
       canaryService: canary-preview
+      
       stableService: canary-prod
 
       # Keep running performance test in the background
@@ -63,20 +68,49 @@ spec:
 
       # Release steps
       steps:
+        
         # Scale initial production traffic to 0
         - setWeight: 0
-        # Smoke Test it
+
+        # Start 2 pods for testing
+        - setCanaryScale: 
+          - replicas: 2
+
+        # Run some analysis on the non released version
         - analysis:
             templates:
-              - templateName: success-rate
+              - templateName: always-pass
             args:
               - name: version
                 value: metadata.labels['version']
-        # Scale  production traffic to 20
-        - setWeight: 20
-        # Pause for manual approval
-        # - pause: {}
+        
+        # Reset the number of pods to match traffic.
+        # If this is not done, then 20% of the traffic will be 
+        # forward to 2 pods
+        - setCanaryScale:
+            matchTrafficWeight: true
 
-        # Pause for a set time
+        # Open 20% of traffic to the new release 
+        - setCanaryScale:
+            weight: 20
+
+        # Pause the rollout for 2m so that we can conduct some analysis
         - pause:
-            duration: 10m
+          duration: 2m
+
+        # Run some analysis again since we have exposed the release to some production traffic
+        - analysis:
+            templates:
+              - templateName: always-pass
+            args:
+              - name: version
+                value: metadata.labels['version']
+        
+        - setWeight: 40
+
+        # Pause indefinitely for a manual approval
+        - pause: {}
+
+        # Rollout the rest
+        - setWeight: 100
+

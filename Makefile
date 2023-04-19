@@ -99,11 +99,15 @@ generate_traffic:
 .PHONY: generate_traffic
 
 create_canary_app:
-	argocd app create canary \
+	argocd app create canary-app \
 	--repo http://gitea-http.default.svc.cluster.local:3000/ray/progressive \
 	--path deployments/canary \
 	--dest-server https://kubernetes.default.svc \
-	--dest-namespace default
+	--dest-namespace default \
+	--sync-policy auto \
+	--revision-history-limit 1 \
+	--label app=blue-green \
+	--auto-prune 
 .PHONY: create_canary_app
 
 
