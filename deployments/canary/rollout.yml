@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
         - name: canary
-          image: app:v2
+          image: app:v3
           imagePullPolicy: Never
           resources:
             requests:
