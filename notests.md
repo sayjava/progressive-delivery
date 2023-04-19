@@ -1,7 +1,9 @@
+# Slide 0: Objectives
+
 
 # Slide 1: Current State of Affairs
 - Discuss current setup
-  - Apps running in none production environment means we dont know how they will behave (There are differences between prod and non-prod or non-production receiving cluster)
+  - Apps running in none production environment means we don't know how they will behave (There are differences between prod and non-prod or non-production receiving cluster)
   - We are exposed to the current state of apps as our customer at the same time.
   - Rollback not instantaneous
   - Customer impact is quite high 
@@ -93,7 +95,8 @@ what can we do in that mean time before the new version is promoted as a release
   - Blue Green
   - Canary Deployment
     - Steps
-    - Analyses
+    - 
+    - Analysis
   - Experimental Deployment
 
 
