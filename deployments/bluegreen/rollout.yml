@@ -18,7 +18,7 @@ spec:
     revisions: 1
 
   # Pause allows a user to manually pause a rollout at any time.
-  paused: false
+  paused: true
 
   selector:
     matchLabels:
@@ -30,7 +30,7 @@ spec:
     spec:
       containers:
         - name: blue-green
-          image: app:v2
+          image: app:v1
           imagePullPolicy: Never
           resources:
             requests:
