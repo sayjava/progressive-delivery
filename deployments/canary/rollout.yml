@@ -11,7 +11,7 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: canary-app
-  revisionHistoryLimit: 1
+  revisionHistoryLimit: 0
   strategy:
     canary:
       abortScaleDownDelaySeconds: 600
@@ -32,5 +32,21 @@ spec:
           role: preview
 
       steps:
-        - setWeight: 20
+        # 1 Pod Zero traffic
+        - setCanaryScale:
+            replicas: 1
+
+        # Pause Indefinitely
         - pause: { }
+
+        # 60% traffic
+        - setCanaryScale:
+            weight: 60
+            matchTrafficWeight: true
+
+        # Pause Indefinitely
+        - pause: { }
+
+        # Full release
+        - setWeight: 100
+        # 50% traffic
