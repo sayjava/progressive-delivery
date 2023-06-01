@@ -1,0 +1,86 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/instance: canary-app
+  name: canary-app
+spec:
+  # Scale down existing deployment to allow rollout  
+  replicas: 0                                  
+  selector:
+    matchLabels:
+      app: canary-app
+  template:
+    metadata:
+      labels:
+        app: canary-app
+    spec:
+      containers:
+        - name: canary-app
+          image: app:v1
+          imagePullPolicy: Never
+          resources:
+            requests:
+              memory: 100Mi
+              cpu: 10m
+          ports:
+            - containerPort: 3000
+
+---
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: canary-prod
+  annotations:
+    kubernetes.io/ingress.class: nginx
+spec:
+  rules:
+    - host: prod.local
+      http:
+        paths:
+          - path: /
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: canary-prod
+                port:
+                  number: 80
+
+---
+
+kind: Service
+apiVersion: v1
+metadata:
+  name: canary-prod
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io.scheme: "http"
+    prometheus.io/path: "/metrics"
+    prometheus.io/port: "3000"
+spec:
+  selector:
+    app: canary-app
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3000
+
+      
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: canary-preview
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io.scheme: "http"
+    prometheus.io/path: "/metrics"
+    prometheus.io/port: "3000"
+spec:
+  selector:
+    app: canary-app
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3000

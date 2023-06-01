@@ -1,35 +1,29 @@
-# This example demonstrates a Rollout using the canary update strategy, which contains a manual
-# gate before promoting the new stack.
-apiVersion: argoproj.io/v1alpha1
+apiVersion: argoproj.io/v1alpha1 
 kind: Rollout
 metadata:
-  name: canary
-  labels:
-    app: canary-app
-    version: v1
+  name: canary-app
 spec:
   replicas: 5
-  revisionHistoryLimit: 2
   selector:
     matchLabels:
       app: canary-app
-  template:
-    metadata:
-      labels:
-        app: canary-app
-    spec:
-      containers:
-        - name: canary
-          image: app:v3
-          imagePullPolicy: Never
-          resources:
-            requests:
-              memory: 100Mi
-              cpu: 10m
-          ports:
-            - containerPort: 3000
+  workloadRef:  # Reference an existing Deployment using workloadRef field
+    apiVersion: apps/v1
+    kind: Deployment
+    name: canary-app
+  revisionHistoryLimit: 1
   strategy:
     canary:
+      abortScaleDownDelaySeconds: 600
+      dynamicStableScale: true
+      canaryService: canary-preview
+      stableService: canary-prod
+      trafficRouting:
+        nginx:
+          stableIngress: canary-prod
+          additionalIngressAnnotations: # optional
+            canary-by-header: X-Canary
+            canary-by-header-value: commit-hash
       stableMetadata:
         labels:
           role: prod
@@ -37,77 +31,6 @@ spec:
         labels:
           role: preview
 
-      # How long to keep the old pods around
-      # before they are killed off
-      scaleDownDelaySeconds: 30
-
-      # During an abort, how long to keep the pods around for
-      abortScaleDownDelaySeconds: 120
-
-      maxUnavailable: 2
-      
-      # How many old versions should we keep around in case
-      # of a manual rollback
-      scaleDownDelayRevisionLimit: 2
-      
-      canaryService: canary-preview
-      
-      stableService: canary-prod
-
-      # Keep running performance test in the background
-      analysis:
-        templates:
-          - templateName: performance
-        args:
-          - name: version
-            value: v3
-
-      trafficRouting:
-        nginx:
-          stableIngress: canary-prod
-
-      # Release steps
       steps:
-        
-        # Scale initial production traffic to 0
-        - setWeight: 0
-
-        # Start 2 pods for testing
-        - setCanaryScale: 
-            replicas: 2
-
-        # Run some analysis on the non released version
-        - analysis:
-            templates:
-              - templateName: always-pass
-        
-        # Reset the number of pods to match traffic.
-        # If this is not done, then 20% of the traffic will be 
-        # forward to 2 pods
-        - setCanaryScale:
-            matchTrafficWeight: true
-
-        # Open 20% of traffic to the new release 
-        - setCanaryScale:
-            weight: 20
-
-        # Pause the rollout for 2m so that we can conduct some analysis
-        - pause:
-            duration: 2m
-
-        # Run some analysis again since we have exposed the release to some production traffic
-        - analysis:
-            templates:
-              - templateName: always-pass
-            args:
-              - name: version
-                value: v3
-        
-        - setWeight: 40
-
-        # Pause indefinitely for a manual approval
-        - pause: {}
-
-        # Rollout the rest
-        - setWeight: 100
-
+        - setWeight: 20
+        - pause: { }

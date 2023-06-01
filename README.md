@@ -1,76 +1,43 @@
+# Argo Rollout Deployment Strategies 
+
+## Perquisites
+- [Docker]()
+- [kind (Kubernetes in Docker)]()
+- [helm]()
+- [make]()
+- [kubectl]()
+- [kubectl argo plugin]()
+
 ## Setup
 
 - [ ] Ingress controller
-- [ ] ArgoCD
 - [ ] Argo Rollout
-- [ ] Gitea
-- [ ] Hostnames
 - [ ] Prometheus
-- [ ] Graphana
+- [ ] Grafana
 
-## Dashboard
+## Steps
+- create cluster with `kind create cluster --config configs/kind.yml`
+- create namespaces: `make setup` 
+- build and load apps: `make build_and_load_apps`
+- install grafana: `make install_grafana`
+- install prometheus: `make install_prometheus`
+- install ingress: `make install_ingress`
+- install argo rollout `make install_argo_rollout`
 
-https://github.com/kubernetes/dashboard/blob/master/docs/user/access-control/creating-sample-user.md
 
-## K8s
+## Setup monitoring
+- run `make show_grafana`
+- login for the first time with `admin` and `admin` for username and password.
+- add prometheus as a datasource from the `Admin` panel
+  - Select prometheus
+  - Use `http://prometheus-server.monitoring.svc` as the prometheus url
+  - Install the application dashboard using the supplied application dashboard
+  - Install the nginx dashboard from the dashboard folder
 
-https://howchoo.com/kubernetes/read-kubernetes-secrets
+## Deploy Applications
 
-kubectl -n argocd get secret argocd-initial-admin-secret -o yaml
+- Test app `http://prod.local:8080` 
+- Generate traffic `make generate_traffic`
 
-## Argo Rollout
-
-```bash
-kubectl create namespace argo-rollouts 
-
-kubectl apply -n argo-rollouts -f
-https://github.com/argoproj/argo-rollouts/releases/latest/download/install.yaml
-
-kubectl argo rollouts dashboard
-```
-
-## Argo CD
-
-```bash
-kubectl create namespace argocd
-kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
-
-kubectl port-forward svc/argocd-server -n argocd 8080:443
-```
-
-## Examples
-
-https://github.com/argoproj/argo-rollouts/tree/master/examples
-
-## Install Expose ingress controller
-
-https://kubernetes.github.io/ingress-nginx/deploy/#local-testing
-
-```bash
-helm upgrade --install ingress-nginx ingress-nginx\
---repo https://kubernetes.github.io/ingress-nginx\
---namespace ingress-nginx --create-namespace
-```
-
-```bash
-kubectl port-forward --namespace=ingress-nginx service/ingress-nginx-controller 8080:80
-```
-
-```bash
-kubectl get service ingress-nginx-controller --namespace=ingress-nginx
-```
-
-## GITEA
-
-```bash
-helm repo add gitea-charts https://dl.gitea.io/charts/ helm install gitea
-gitea-charts/gitea
-```
-
-```bash
-kubectl --namespace default port-forward svc/gitea-http 3000:3000
-```
-
-## ISTIO Canary
-
-https://github.com/etiennetremel/istio-cross-namespace-canary-release-demo
+## Canary Deployment
+- 

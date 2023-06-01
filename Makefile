@@ -1,15 +1,9 @@
 
-# prometheus-server.monitoring.svc.cluster.local
-# grafana.monitoring.svc.cluster.local
+# http://prometheus-server.monitoring.svc.cluster.local
+# http://grafana.monitoring.svc.cluster.local
 # prometheus-prometheus-pushgateway.monitoring.svc.cluster.local
 
-setup:
-	@kubectl create namespace argo-rollouts
-	@kubectl create namespace argocd
-	@kubectl create namespace monitoring
-.PHONY: setup
-
-build_apps:
+build_and_load_apps:
 	@docker build --build-arg version='v1' -t app:v1 app
 	@docker build --build-arg version='v2' -t app:v2 app
 	@docker build --build-arg version='v3' -t app:v3 app
@@ -18,14 +12,12 @@ build_apps:
 	@docker build --build-arg version='error' -t app:error app
 	@docker build --build-arg version='quit' -t app:quit app
 
-.PHONY: build_apps
-
-build_and_load_apps: build_apps
 	@kind load docker-image   app:v1 app:v2 app:v3 app:v4 app:slow app:error app:quit
 
 .PHONY: build_and_load_apps
 
-install_grafana:
+install_monitoring:
+	@kubectl create namespace monitoring
 	@helm repo add grafana https://grafana.github.io/helm-charts
 	@helm install grafana \
 		--namespace=monitoring \
@@ -34,13 +26,9 @@ install_grafana:
 		--set=service.type=NodePort \
     	grafana/grafana
 
-.PHONY: install_grafana
-
-install_prometheus:
 	@helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
 	@helm install prometheus prometheus-community/prometheus --create-namespace --namespace=monitoring
-
-.PHONY: install_prometheus
+.PHONY: install_monitoring
 
 install_ingress:
 	@helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
@@ -55,16 +43,22 @@ install_ingress:
 		--set-string controller.podAnnotations."prometheus\.io/port"="10254"
 .PHONY: install_ingress
 
-install_argo:
+install_argo_rollout:
+	@kubectl create namespace argo-rollouts
 	@kubectl apply -n argo-rollouts -f https://github.com/argoproj/argo-rollouts/releases/latest/download/install.yaml
-	@kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+.PHONY: install_argo_rollout
 
-.PHONY: install_argo
+setup_cluster:
+	@kind create cluster --config configs/kind.yml
+.PHONY: setup_cluster
 
-install_gitea:
-	@helm repo add gitea-charts https://dl.gitea.io/charts/
-	@helm install gitea gitea-charts/gitea
-.PHONY: install_gitea
+setup: setup_cluster build_and_load_apps install_monitoring install_ingress install_argo_rollout
+	@kubectl apply -f deployments/canary/deployment.yml
+.PHONY: setup
+
+tear_down:
+	@kind delete cluster
+.PHONY: tear_down
 
 deploy_analysis:
 	@kubectl apply -f analysis
@@ -86,55 +80,38 @@ show_rollout:
 	@kubectl argo rollouts dashboard
 .PHONY: show_rollout
 
-show_cd:
-	@kubectl port-forward svc/argocd-server -n argocd 9090:443
-.PHONY: show_cd
-
-show_gitea:
-	@kubectl port-forward svc/gitea-http 3000:3000
-.PHONY: show_gitea
-
 generate_traffic:
 	@bash traffic.sh
 .PHONY: generate_traffic
 
-create_canary_app:
-	argocd app create canary-app \
-	--repo http://gitea-http.default.svc.cluster.local:3000/ray/progressive \
-	--path deployments/canary \
-	--dest-server https://kubernetes.default.svc \
-	--dest-namespace default \
-	--sync-policy auto \
-	--revision-history-limit 1 \
-	--label app=blue-green \
-	--auto-prune 
-.PHONY: create_canary_app
-
-
-create_bg_app:
-	argocd app create blue-green \
-	--repo http://gitea-http.default.svc.cluster.local:3000/ray/progressive \
-	--path deployments/bluegreen \
-	--dest-server https://kubernetes.default.svc \
-	--dest-namespace default \
-	--sync-policy auto \
-	--revision-history-limit 1 \
-	--label app=blue-green \
-	--auto-prune 
-.PHONY: create_bg_app
-
-create_traffic_app:
-	argocd app create traffic-app \
-	--repo http://gitea-http.default.svc.cluster.local:3000/ray/progressive \
-	--path deployments/traffic \
-	--dest-server https://kubernetes.default.svc \
-	--dest-namespace default
-.PHONY: create_traffic_app
-
-traffic:
+wrk_traffic:
 	wrk -t1 -c1 -d2h http://prod.local:8080
-.PHONY: traffic
+.PHONY: wrk_traffic
 
-# kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
+canary_deployment:
+	@kubectl apply -f deployments/canary/rollout.yml
+.PHONY: canary_deployment
 
-# VmUkEYkgGLyWJ7s2
+canary_deploy_version:
+	@kubectl argo rollouts set image canary-app canary-app=app:$(version)
+.PHONY: canary_deploy_version
+
+canary_watch:
+	@kubectl argo rollouts get rollout canary-app -w
+.PHONY: canary_watch
+
+canary_status:
+	@kubectl argo rollouts status canary-app
+.PHONY: canary_status
+
+canary_version:
+	@kubectl argo rollouts version canary-app
+.PHONY: canary_version
+
+canary_promote:
+	@kubectl argo rollouts promote canary-app
+.PHONY: canary_promote
+
+canary_rolloback:
+	@kubectl argo rollouts undo canary-app
+.PHONY: canary_rollback
