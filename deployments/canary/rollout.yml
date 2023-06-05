@@ -14,7 +14,7 @@ spec:
   revisionHistoryLimit: 0
   strategy:
     canary:
-      abortScaleDownDelaySeconds: 600
+      abortScaleDownDelaySeconds: 5
       dynamicStableScale: true
       canaryService: canary-preview
       stableService: canary-prod
@@ -33,27 +33,21 @@ spec:
 
       steps:
         # 1 Pod Zero traffic
-        - setCanaryScale:
-            replicas: 1
+        - setWeight: 60
 
-        # Pause Indefinitely
-        - pause: {}
-
-        # Run analysis
+        # Run analysis that will always fail
         - analysis:
             templates:
-              - templateName: smoke-test
-            args:
-              - name: url
-                value: canary-preview.default.svc.cluster.local
-
-        # 60% traffic
-        - setCanaryScale:
-            weight: 60
-            matchTrafficWeight: true
+              - templateName: always-pass
 
         # Pause Indefinitely
         - pause: {}
+
+        # Run analysis that will always fail
+        - analysis:
+            templates:
+              - templateName: always-pass
+              - templateName: always-fail
 
         # Full release
         - setWeight: 100

@@ -89,3 +89,28 @@ make setup
     # Full release
     - setWeight: 100
 ```
+
+### Auto Rollback Analysis
+
+```yaml
+  steps:
+      # 1 Pod Zero traffic
+      - setWeight: 60
+
+      # Run analysis that will always fail
+      - analysis:
+          templates:
+            - templateName: always-pass
+
+      # Pause Indefinitely
+      - pause: {}
+
+      # Run analysis that will always fail
+      - analysis:
+          templates:
+            - templateName: always-pass
+            - templateName: always-fail
+
+      # Full release
+      - setWeight: 100
+```

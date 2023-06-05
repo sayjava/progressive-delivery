@@ -7,6 +7,7 @@ spec:
     - name: url
   metrics:
     - name: smoke
+      interval: 30s
       count: 5
       failureLimit: 3
       successCondition: "result != 'error'"
