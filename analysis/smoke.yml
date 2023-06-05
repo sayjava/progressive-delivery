@@ -4,16 +4,17 @@ metadata:
   name: smoke-test
 spec:
   args:
-    - name: service-name
+    - name: url
   metrics:
     - name: smoke
+      count: 5
+      failureLimit: 3
       successCondition: "result != 'error'"
       provider:
         web:
           method: GET
           timeoutSeconds: 20
-          # This can be a variable passed into
-          url: "http://{{ args.service-name }}"
+          url: "http://{{ args.url }}"
           headers:
             - key: Content-Type
               value: "application/json"

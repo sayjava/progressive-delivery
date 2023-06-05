@@ -1,4 +1,4 @@
-apiVersion: argoproj.io/v1alpha1 
+apiVersion: argoproj.io/v1alpha1
 kind: Rollout
 metadata:
   name: canary-app
@@ -7,7 +7,7 @@ spec:
   selector:
     matchLabels:
       app: canary-app
-  workloadRef:  # Reference an existing Deployment using workloadRef field
+  workloadRef: # Reference an existing Deployment using workloadRef field
     apiVersion: apps/v1
     kind: Deployment
     name: canary-app
@@ -37,7 +37,15 @@ spec:
             replicas: 1
 
         # Pause Indefinitely
-        - pause: { }
+        - pause: {}
+
+        # Run analysis
+        - analysis:
+            templates:
+              - templateName: smoke-test
+            args:
+              - name: url
+                value: canary-preview.default.svc.cluster.local
 
         # 60% traffic
         - setCanaryScale:
@@ -45,8 +53,7 @@ spec:
             matchTrafficWeight: true
 
         # Pause Indefinitely
-        - pause: { }
+        - pause: {}
 
         # Full release
         - setWeight: 100
-        # 50% traffic

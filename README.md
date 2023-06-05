@@ -1,6 +1,7 @@
-# Argo Rollout Deployment Strategies 
+# Argo Rollout Deployment Strategies
 
 ## Perquisites
+
 - [Docker]()
 - [kind (Kubernetes in Docker)]()
 - [helm]()
@@ -8,24 +9,14 @@
 - [kubectl]()
 - [kubectl argo plugin]()
 
-## Setup
-
-- [ ] Ingress controller
-- [ ] Argo Rollout
-- [ ] Prometheus
-- [ ] Grafana
-
 ## Steps
-- create cluster with `kind create cluster --config configs/kind.yml`
-- create namespaces: `make setup` 
-- build and load apps: `make build_and_load_apps`
-- install grafana: `make install_grafana`
-- install prometheus: `make install_prometheus`
-- install ingress: `make install_ingress`
-- install argo rollout `make install_argo_rollout`
 
+```sh
+make setup
+```
 
 ## Setup monitoring
+
 - run `make show_grafana`
 - login for the first time with `admin` and `admin` for username and password.
 - add prometheus as a datasource from the `Admin` panel
@@ -36,8 +27,65 @@
 
 ## Deploy Applications
 
-- Test app `http://prod.local:8080` 
+- Test app `http://prod.local:8080`
 - Generate traffic `make generate_traffic`
 
 ## Canary Deployment
-- 
+
+-
+
+## Rollouts
+
+### Dark launch (Zero Traffic)
+
+```yaml
+  steps:
+    # 1 Pod Zero traffic
+    - setCanaryScale:
+        replicas: 1
+
+    # Pause Indefinitely
+    - pause: {}
+
+    # 60% traffic
+    - setCanaryScale:
+        weight: 60
+        matchTrafficWeight: true
+
+    # Pause Indefinitely
+    - pause: {}
+
+    # Full release
+    - setWeight: 100
+```
+
+### Dark Launch (Smoke Test)
+
+```yaml
+ steps:
+    # 1 Pod Zero traffic
+    - setCanaryScale:
+        replicas: 1
+
+    # Pause Indefinitely
+    - pause: {}
+
+    # Run analysis
+    - analysis:
+        templates:
+          - templateName: smoke-test
+        args:
+          - name: url
+            value: canary-preview.default.svc.cluster.local
+
+    # 60% traffic
+    - setCanaryScale:
+        weight: 60
+        matchTrafficWeight: true
+
+    # Pause Indefinitely
+    - pause: {}
+
+    # Full release
+    - setWeight: 100
+```

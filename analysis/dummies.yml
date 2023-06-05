@@ -4,22 +4,26 @@ metadata:
   name: always-pass
 spec:
   metrics:
-  - name: always-pass
-    count: 1
-    interval: 5s
-    failureLimit: 1
-    provider:
-      job:
-        spec:
-          template:
-            spec:
-              containers:
-              - name: always-pass
-                image: alpine:3.8
-                command: [sh, -c]
-                args: [exit 0]
-              restartPolicy: Never
-          backoffLimit: 0
+    - name: always-pass
+      count: 1
+      interval: 5s
+      failureLimit: 1
+      provider:
+        job:
+          spec:
+            template:
+              spec:
+                containers:
+                  - name: always-pass
+                    image: alpine:3.8
+                    command: [sh, -c, -x, -e]
+                    args:
+                      - |
+                        echo "Running always pass"
+                        sleep 30s
+                        exit 0
+                restartPolicy: Never
+            backoffLimit: 0
 ---
 kind: AnalysisTemplate
 apiVersion: argoproj.io/v1alpha1
@@ -27,47 +31,23 @@ metadata:
   name: always-fail
 spec:
   metrics:
-  - name: always-fail
-    count: 5
-    interval: 5s
-    failureLimit: 3
-    provider:
-      job:
-        spec:
-          template:
-            spec:
-              containers:
-              - name: sleep
-                image: alpine:3.8
-                command: [sh, -c]
-                args: [exit -1]
-              restartPolicy: Never
-          backoffLimit: 0
-
----
-kind: AnalysisTemplate
-apiVersion: argoproj.io/v1alpha1
-metadata:
-  name: slow-fail
-spec:
-  metrics:
-  - name: slow-fail
-    count: 5
-    interval: 5s
-    failureLimit: 3
-    provider:
-      job:
-        spec:
-          template:
-            spec:
-              containers:
-              - name: sleep
-                image: alpine:3.8
-                command: [sh, -c, -x, -e]
-                args: 
-                  - |
-                    echo "Running slow fail"
-                    sleep 30s
-                    exit -1
-              restartPolicy: Never
-          backoffLimit: 0
+    - name: always-fail
+      count: 5
+      interval: 5s
+      failureLimit: 3
+      provider:
+        job:
+          spec:
+            template:
+              spec:
+                containers:
+                  - name: sleep
+                    image: alpine:3.8
+                    command: [sh, -c, -x, -e]
+                    args:
+                      - |
+                        echo "Running always fail"
+                        sleep 30s
+                        exit -1
+                restartPolicy: Never
+            backoffLimit: 0
